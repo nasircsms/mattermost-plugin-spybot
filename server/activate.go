@@ -44,6 +44,8 @@ func (p *Plugin) OnActivate() error {
 		}
 	}
 
+	p.Run()
+
 	return nil
 }
 
@@ -53,6 +55,8 @@ func (p *Plugin) OnDeactivate() error {
 	if err != nil {
 		return errors.Wrap(err, "failed to query teams OnDeactivate")
 	}
+
+	p.Stop()
 
 	for _, team := range teams {
 		if cErr := p.API.UnregisterCommand(team.Id, CommandTrigger); cErr != nil {
