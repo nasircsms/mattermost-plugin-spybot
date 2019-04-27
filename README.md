@@ -4,7 +4,7 @@ Inspired by the [mattermost-spybot](https://github.com/prabhu43/mattermost-spybo
 
 Has a slash command `/spy @username`
 
-You get a notification when the person logs on.
+You get a notification when the person has a status change.
 
 ![screenshot.png](screenshot.png)
 
