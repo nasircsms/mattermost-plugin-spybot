@@ -37,6 +37,24 @@ func (p *Plugin) spy(target string, watcher string) {
 	p.API.KVSet(WatchedTargets, ro)
 
 }
+func (p *Plugin) unSpy(target string, watcher string) {
+
+	bytes, _ := p.API.KVGet(WatchedTargets)
+
+	var targets []TargetWatch
+	var updateTargets []TargetWatch
+	json.Unmarshal(bytes, &targets)
+
+	for _, targetWatch := range targets {
+		if targetWatch.Watcher != watcher && targetWatch.Target != target {
+			updateTargets = append(updateTargets, targetWatch)
+		}
+	}
+	ro, _ := json.Marshal(updateTargets)
+
+	p.API.KVSet(WatchedTargets, ro)
+
+}
 
 func (p *Plugin) trigger() {
 
@@ -58,10 +76,14 @@ func (p *Plugin) trigger() {
 				continue
 			}
 
+			prefix := "user"
+			if targetUser.IsBot {
+				prefix = "bot"
+			}
 			post := model.Post{
 				ChannelId: channel.Id,
 				UserId:    p.spyUserId,
-				Message:   "user @" + targetWatch.Target + " is now " + status.Status + ".",
+				Message:   prefix + " @" + targetWatch.Target + " is now " + status.Status + ".",
 			}
 			p.API.CreatePost(&post)
 
