@@ -6,6 +6,7 @@ Has a slash command `/spy @username`
 
 You get a notification when the person logs on.
 
+![screenshot.png](screenshot.png)
 
 ##### Building
 ```
