@@ -37,7 +37,7 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 		return &model.CommandResponse{}, uErr
 	}
 
-	target := strings.Trim(args.Command, "/"+CommandTrigger+" @")
+	target := strings.Split(args.Command, "/"+CommandTrigger+" @")[1]
 
 	p.spy(target)
 
