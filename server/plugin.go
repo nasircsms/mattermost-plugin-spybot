@@ -19,6 +19,8 @@ type Plugin struct {
 
 	spyUserId string
 
+	running bool
+
 	readFile func(path string) ([]byte, error)
 }
 

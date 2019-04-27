@@ -39,7 +39,7 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 
 	target := strings.Split(args.Command, "/"+CommandTrigger+" @")[1]
 
-	p.spy(target)
+	p.spy(target, user.Username)
 
 	post := model.Post{
 		ChannelId: args.ChannelId,
