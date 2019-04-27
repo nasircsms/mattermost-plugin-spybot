@@ -4,6 +4,6 @@ var manifest = struct {
 	Id      string
 	Version string
 }{
-	Id:      "com.mattermost.sample-plugin",
+	Id:      "com.github.scottleedavis.mattermost-plugin-spybot",
 	Version: "0.1.0",
 }
