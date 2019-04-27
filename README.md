@@ -4,7 +4,7 @@ Inspired by the [mattermost-spybot](https://github.com/prabhu43/mattermost-spybo
 
 Has the slash commands `/spy @username` and `/unspy @username`
 
-You get a notification when the person is online, offline, is away, or 'do not disturb'.
+You get a notification when the person is online, offline, or 'do not disturb'.  (away is ignored)
 
 ![screenshot.png](screenshot.png)
 
