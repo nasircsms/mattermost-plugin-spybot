@@ -1,4 +1,4 @@
-# Mattermost Plugin Spybot
+# Mattermost Plugin Spybot  [![CircleCI](https://circleci.com/gh/scottleedavis/mattermost-plugin-spybot.svg?style=svg)](https://circleci.com/gh/scottleedavis/mattermost-plugin-spybot)
 
 Inspired by the [mattermost-spybot](https://github.com/prabhu43/mattermost-spybot) integration.
 
