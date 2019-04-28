@@ -8,7 +8,15 @@ You get a notification when the person is online, offline, or 'do not disturb'. 
 
 ![screenshot.png](screenshot.png)
 
-##### Building
+
+### Installation
+
+_requires Mattermost 5.10 or greater_
+
+1) Go to the [releases page](https://github.com/scottleedavis/mattermost-plugin-remind/releases) of this GitHub repository and download the latest release for your Mattermost server.
+2) Upload this file in the Mattermost System Console > Plugins > Management page to install the plugin. To learn more about how to upload a plugin, see the documentation.
+    
+### Building
 ```
 make
 ```
