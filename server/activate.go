@@ -67,6 +67,10 @@ func (p *Plugin) OnDeactivate() error {
 	return nil
 }
 
+func (p *Plugin) OnConfigurationChange() error {
+	return nil
+}
+
 func (p *Plugin) ensureBotExists() (string, *model.AppError) {
 	p.API.LogDebug("Ensuring Spybot exists")
 

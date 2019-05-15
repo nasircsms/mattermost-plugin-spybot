@@ -19,22 +19,24 @@ type TargetWatch struct {
 
 func (p *Plugin) spy(target string, watcher string) {
 
-	targetUser, _ := p.API.GetUserByUsername(target)
-	status, _ := p.API.GetUserStatus(targetUser.Id)
+	if targetUser, err := p.API.GetUserByUsername(target); err != nil {
+		p.API.LogError(err.Error())
+	} else {
+		status, _ := p.API.GetUserStatus(targetUser.Id)
+		bytes, _ := p.API.KVGet(WatchedTargets)
 
-	bytes, _ := p.API.KVGet(WatchedTargets)
+		var targets []TargetWatch
+		json.Unmarshal(bytes, &targets)
+		targetWatch := TargetWatch{
+			Target:  target,
+			Status:  status.Status,
+			Watcher: watcher,
+		}
+		targets = append(targets, targetWatch)
+		ro, _ := json.Marshal(targets)
 
-	var targets []TargetWatch
-	json.Unmarshal(bytes, &targets)
-	targetWatch := TargetWatch{
-		Target:  target,
-		Status:  status.Status,
-		Watcher: watcher,
+		p.API.KVSet(WatchedTargets, ro)
 	}
-	targets = append(targets, targetWatch)
-	ro, _ := json.Marshal(targets)
-
-	p.API.KVSet(WatchedTargets, ro)
 
 }
 func (p *Plugin) unSpy(target string, watcher string) {
@@ -64,32 +66,36 @@ func (p *Plugin) trigger() {
 
 	var updatedTargets []TargetWatch
 	for _, targetWatch := range targets {
-		targetUser, _ := p.API.GetUserByUsername(targetWatch.Target)
-		status, _ := p.API.GetUserStatus(targetUser.Id)
-		if status.Status != targetWatch.Status && status.Status != "away" {
+		if targetUser, err := p.API.GetUserByUsername(targetWatch.Target); err != nil {
+			p.API.LogError(err.Error())
+		} else {
+			status, _ := p.API.GetUserStatus(targetUser.Id)
+			if status.Status != targetWatch.Status && status.Status != "away" {
 
-			watcherUser, _ := p.API.GetUserByUsername(targetWatch.Watcher)
+				watcherUser, _ := p.API.GetUserByUsername(targetWatch.Watcher)
 
-			channel, cErr := p.API.GetDirectChannel(p.spyUserId, watcherUser.Id)
-			if cErr != nil {
-				p.API.LogError("failed to create channel ")
-				continue
+				channel, cErr := p.API.GetDirectChannel(p.spyUserId, watcherUser.Id)
+				if cErr != nil {
+					p.API.LogError("failed to create channel ")
+					continue
+				}
+
+				prefix := "user"
+				if targetUser.IsBot {
+					prefix = "bot"
+				}
+				post := model.Post{
+					ChannelId: channel.Id,
+					UserId:    p.spyUserId,
+					Message:   prefix + " @" + targetWatch.Target + " is now " + status.Status + ".",
+				}
+				p.API.CreatePost(&post)
+
+				targetWatch.Status = status.Status
 			}
-
-			prefix := "user"
-			if targetUser.IsBot {
-				prefix = "bot"
-			}
-			post := model.Post{
-				ChannelId: channel.Id,
-				UserId:    p.spyUserId,
-				Message:   prefix + " @" + targetWatch.Target + " is now " + status.Status + ".",
-			}
-			p.API.CreatePost(&post)
-
-			targetWatch.Status = status.Status
+			updatedTargets = append(updatedTargets, targetWatch)
 		}
-		updatedTargets = append(updatedTargets, targetWatch)
+
 	}
 	ro, _ := json.Marshal(updatedTargets)
 

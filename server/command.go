@@ -47,15 +47,15 @@ func (p *Plugin) unregisterCommand(teamId string) error {
 
 func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
 
-	user, uErr := p.API.GetUser(args.UserId)
+	_, uErr := p.API.GetUser(args.UserId)
 	if uErr != nil {
 		return &model.CommandResponse{}, uErr
 	}
 
-	if strings.HasPrefix(args.Command, "/"+CommandTrigger) {
+	if strings.HasPrefix(args.Command, "/"+CommandTrigger+" @") {
 		target := strings.Split(args.Command, "/"+CommandTrigger+" @")[1]
 
-		_, uErr := p.API.GetUserByUsername(target)
+		user, uErr := p.API.GetUserByUsername(target)
 		if uErr != nil {
 			post := model.Post{
 				ChannelId: args.ChannelId,
@@ -64,9 +64,9 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 			}
 			p.API.SendEphemeralPost(user.Id, &post)
 			return &model.CommandResponse{}, uErr
+		} else {
+			p.spy(target, user.Username)
 		}
-
-		p.spy(target, user.Username)
 
 		post := model.Post{
 			ChannelId: args.ChannelId,
@@ -74,10 +74,10 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 			Message:   "spying on @" + target,
 		}
 		p.API.SendEphemeralPost(user.Id, &post)
-	} else {
+	} else if strings.HasPrefix(args.Command, "/"+UnCommandTrigger+" @") {
 		target := strings.Split(args.Command, "/"+UnCommandTrigger+" @")[1]
 
-		_, uErr := p.API.GetUserByUsername(target)
+		user, uErr := p.API.GetUserByUsername(target)
 		if uErr != nil {
 			post := model.Post{
 				ChannelId: args.ChannelId,
@@ -86,9 +86,9 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 			}
 			p.API.SendEphemeralPost(user.Id, &post)
 			return &model.CommandResponse{}, uErr
+		} else {
+			p.unSpy(target, user.Username)
 		}
-
-		p.unSpy(target, user.Username)
 
 		post := model.Post{
 			ChannelId: args.ChannelId,
