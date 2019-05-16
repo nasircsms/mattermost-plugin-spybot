@@ -42,7 +42,6 @@ func (p *Plugin) spy(target string, watcher string) {
 					if err := p.API.KVSet(WatchedTargets, jsonTargets); err != nil {
 						p.API.LogError(err.Error())
 					}
-					p.API.LogInfo("spied")
 				}
 			}
 		}
@@ -69,7 +68,6 @@ func (p *Plugin) unSpy(target string, watcher string) {
 			if err := p.API.KVSet(WatchedTargets, jsonTargets); err != nil {
 				p.API.LogError(err.Error())
 			}
-			p.API.LogInfo("unspied")
 		}
 	}
 }
