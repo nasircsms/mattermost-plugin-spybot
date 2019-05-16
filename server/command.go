@@ -47,7 +47,7 @@ func (p *Plugin) unregisterCommand(teamId string) error {
 
 func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
 
-	_, uErr := p.API.GetUser(args.UserId)
+	user, uErr := p.API.GetUser(args.UserId)
 	if uErr != nil {
 		return &model.CommandResponse{}, uErr
 	}
@@ -55,7 +55,7 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 	if strings.HasPrefix(args.Command, "/"+CommandTrigger+" @") {
 		target := strings.Split(args.Command, "/"+CommandTrigger+" @")[1]
 
-		user, uErr := p.API.GetUserByUsername(target)
+		_, uErr := p.API.GetUserByUsername(target)
 		if uErr != nil {
 			post := model.Post{
 				ChannelId: args.ChannelId,
@@ -77,7 +77,7 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 	} else if strings.HasPrefix(args.Command, "/"+UnCommandTrigger+" @") {
 		target := strings.Split(args.Command, "/"+UnCommandTrigger+" @")[1]
 
-		user, uErr := p.API.GetUserByUsername(target)
+		_, uErr := p.API.GetUserByUsername(target)
 		if uErr != nil {
 			post := model.Post{
 				ChannelId: args.ChannelId,

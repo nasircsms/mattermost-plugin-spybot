@@ -22,40 +22,56 @@ func (p *Plugin) spy(target string, watcher string) {
 	if targetUser, err := p.API.GetUserByUsername(target); err != nil {
 		p.API.LogError(err.Error())
 	} else {
-		status, _ := p.API.GetUserStatus(targetUser.Id)
-		bytes, _ := p.API.KVGet(WatchedTargets)
-
-		var targets []TargetWatch
-		json.Unmarshal(bytes, &targets)
-		targetWatch := TargetWatch{
-			Target:  target,
-			Status:  status.Status,
-			Watcher: watcher,
+		if status, err := p.API.GetUserStatus(targetUser.Id); err != nil {
+			p.API.LogError(err.Error())
+		} else {
+			if bytes, err := p.API.KVGet(WatchedTargets); err != nil {
+				p.API.LogError(err.Error())
+			} else {
+				var targets []TargetWatch
+				json.Unmarshal(bytes, &targets)
+				targetWatch := TargetWatch{
+					Target:  target,
+					Status:  status.Status,
+					Watcher: watcher,
+				}
+				targets = append(targets, targetWatch)
+				if jsonTargets, err := json.Marshal(targets); err != nil {
+					p.API.LogError(err.Error())
+				} else {
+					if err := p.API.KVSet(WatchedTargets, jsonTargets); err != nil {
+						p.API.LogError(err.Error())
+					}
+					p.API.LogInfo("spied")
+				}
+			}
 		}
-		targets = append(targets, targetWatch)
-		ro, _ := json.Marshal(targets)
-
-		p.API.KVSet(WatchedTargets, ro)
 	}
 
 }
 func (p *Plugin) unSpy(target string, watcher string) {
 
-	bytes, _ := p.API.KVGet(WatchedTargets)
+	if bytes, err := p.API.KVGet(WatchedTargets); err != nil {
+		p.API.LogError(err.Error())
+	} else {
+		var targets []TargetWatch
+		var updateTargets []TargetWatch
+		json.Unmarshal(bytes, &targets)
 
-	var targets []TargetWatch
-	var updateTargets []TargetWatch
-	json.Unmarshal(bytes, &targets)
-
-	for _, targetWatch := range targets {
-		if targetWatch.Watcher != watcher && targetWatch.Target != target {
-			updateTargets = append(updateTargets, targetWatch)
+		for _, targetWatch := range targets {
+			if targetWatch.Watcher != watcher && targetWatch.Target != target {
+				updateTargets = append(updateTargets, targetWatch)
+			}
+		}
+		if jsonTargets, err := json.Marshal(updateTargets); err != nil {
+			p.API.LogError(err.Error())
+		} else {
+			if err := p.API.KVSet(WatchedTargets, jsonTargets); err != nil {
+				p.API.LogError(err.Error())
+			}
+			p.API.LogInfo("unspied")
 		}
 	}
-	ro, _ := json.Marshal(updateTargets)
-
-	p.API.KVSet(WatchedTargets, ro)
-
 }
 
 func (p *Plugin) trigger() {
