@@ -2,7 +2,7 @@
 
 Inspired by the [mattermost-spybot](https://github.com/prabhu43/mattermost-spybot) integration.
 
-Has the slash commands `/spy @username` and `/unspy @username`
+Has the slash commands `/spy @username`, `/unspy @username` and `/spy list`
 
 You get a notification when the person is online, offline, or 'do not disturb'.  (away is ignored)
 

@@ -48,6 +48,7 @@ func (p *Plugin) spy(target string, watcher string) {
 	}
 
 }
+
 func (p *Plugin) unSpy(target string, watcher string) {
 
 	if bytes, err := p.API.KVGet(WatchedTargets); err != nil {
@@ -69,6 +70,25 @@ func (p *Plugin) unSpy(target string, watcher string) {
 				p.API.LogError(err.Error())
 			}
 		}
+	}
+}
+
+func (p *Plugin) list(watcher string) string {
+
+	if bytes, err := p.API.KVGet(WatchedTargets); err != nil {
+		p.API.LogError(err.Error())
+		return ""
+	} else {
+		var targets []TargetWatch
+		json.Unmarshal(bytes, &targets)
+
+		var targetNames string
+		for _, targetWatch := range targets {
+			if targetWatch.Watcher == watcher {
+				targetNames += "@" + targetWatch.Target + "\n"
+			}
+		}
+		return targetNames
 	}
 }
 

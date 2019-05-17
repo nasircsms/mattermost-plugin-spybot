@@ -52,7 +52,14 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 		return &model.CommandResponse{}, uErr
 	}
 
-	if strings.HasPrefix(args.Command, "/"+CommandTrigger+" @") {
+	if strings.HasPrefix(args.Command, "/"+CommandTrigger+" list") {
+		post := model.Post{
+			ChannelId: args.ChannelId,
+			UserId:    p.spyUserId,
+			Message:   p.list(user.Username),
+		}
+		p.API.SendEphemeralPost(user.Id, &post)
+	} else if strings.HasPrefix(args.Command, "/"+CommandTrigger+" @") {
 		target := strings.Split(args.Command, "/"+CommandTrigger+" @")[1]
 
 		_, uErr := p.API.GetUserByUsername(target)
