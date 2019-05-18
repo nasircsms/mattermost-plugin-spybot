@@ -59,7 +59,7 @@ func (p *Plugin) unSpy(target string, watcher string) {
 		json.Unmarshal(bytes, &targets)
 
 		for _, targetWatch := range targets {
-			if targetWatch.Watcher != watcher && targetWatch.Target != target {
+			if targetWatch.Watcher != watcher || (targetWatch.Watcher == watcher && targetWatch.Target != target) {
 				updateTargets = append(updateTargets, targetWatch)
 			}
 		}
