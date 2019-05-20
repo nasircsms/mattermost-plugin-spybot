@@ -77,7 +77,7 @@ func (p *Plugin) ensureBotExists() (string, *model.AppError) {
 	bot, createErr := p.API.CreateBot(&model.Bot{
 		Username:    botName,
 		DisplayName: botDisplayName,
-		Description: "Sets and triggers reminders",
+		Description: "Reports on status of users",
 	})
 	if createErr != nil {
 		p.API.LogDebug("Failed to create "+botDisplayName+". Attempting to find existing one.", "err", createErr)

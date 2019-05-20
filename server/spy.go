@@ -108,7 +108,7 @@ func (p *Plugin) trigger() {
 
 				watcherUser, _ := p.API.GetUserByUsername(targetWatch.Watcher)
 
-				channel, cErr := p.API.GetDirectChannel(p.spyUserId, watcherUser.Id)
+				channel, cErr := p.API.GetDirectChannel(watcherUser.Id, p.spyUserId)
 				if cErr != nil {
 					p.API.LogError("failed to create channel ")
 					continue
