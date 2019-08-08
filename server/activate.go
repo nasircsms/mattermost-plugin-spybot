@@ -50,20 +50,7 @@ func (p *Plugin) OnActivate() error {
 }
 
 func (p *Plugin) OnDeactivate() error {
-
-	teams, err := p.API.GetTeams()
-	if err != nil {
-		return errors.Wrap(err, "failed to query teams OnDeactivate")
-	}
-
 	p.Stop()
-
-	for _, team := range teams {
-		if cErr := p.API.UnregisterCommand(team.Id, CommandTrigger); cErr != nil {
-			return errors.Wrap(cErr, "failed to unregister command")
-		}
-	}
-
 	return nil
 }
 
