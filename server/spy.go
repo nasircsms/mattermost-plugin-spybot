@@ -104,7 +104,7 @@ func (p *Plugin) trigger() {
 			p.API.LogError(err.Error())
 		} else {
 			status, _ := p.API.GetUserStatus(targetUser.Id)
-			if status.Status != targetWatch.Status && status.Status != "away" {
+			if status.Status != targetWatch.Status {
 
 				watcherUser, _ := p.API.GetUserByUsername(targetWatch.Watcher)
 
